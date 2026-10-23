@@ -1,0 +1,1236 @@
+/* ==========================================================================
+   Life Dashboard — style.css
+   --------------------------------------------------------------------------
+   Foundation stylesheet for the Life Dashboard. Establishes the design
+   system: base reset, typography, shared design tokens, and CSS variables
+   for light/dark themes scoped under `[data-theme]`. Includes base component
+   styling, a sensible responsive grid layout, and reduced-motion support.
+
+   Phases 10 and 11 refine the responsive breakpoints and accessibility
+   focus states respectively; this file provides a polished starting point.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Base Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  line-height: var(--lh-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Honor the no-flash theme attribute set on <html> by the inline head script. */
+:root {
+  color-scheme: light;
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+
+/* ==========================================================================
+   2. Shared Design Tokens (theme-independent)
+   --------------------------------------------------------------------------
+   Typography, spacing, radii, motion, and z-index live here as they do not
+   swap between themes. Color tokens are defined per-theme in section 3.
+   ========================================================================== */
+
+:root {
+  /* --- Typography ------------------------------------------------------- */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --fs-xs: 0.75rem;     /* 12px */
+  --fs-sm: 0.875rem;    /* 14px */
+  --fs-base: 1rem;      /* 16px */
+  --fs-md: 1.125rem;    /* 18px */
+  --fs-lg: 1.25rem;     /* 20px */
+  --fs-xl: 1.5rem;      /* 24px */
+  --fs-2xl: 2rem;       /* 32px */
+  --fs-3xl: 2.5rem;     /* 40px */
+  --fs-display: 3.25rem; /* 52px */
+
+  --lh-tight: 1.15;
+  --lh-base: 1.5;
+  --lh-relaxed: 1.7;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.04em;
+
+  /* --- Spacing scale ---------------------------------------------------- */
+  --space-1: 0.25rem;   /* 4px  */
+  --space-2: 0.5rem;    /* 8px  */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 3rem;      /* 48px */
+
+  /* --- Radii ------------------------------------------------------------ */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* --- Motion ----------------------------------------------------------- */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Z-index ---------------------------------------------------------- */
+  --z-base: 1;
+  --z-raised: 10;
+  --z-header: 100;
+  --z-overlay: 1000;
+
+  /* --- Layout ----------------------------------------------------------- */
+  --page-max-width: 1280px;
+  --header-height: 64px;
+}
+
+
+/* ==========================================================================
+   3. Theme Color Variables
+   --------------------------------------------------------------------------
+   Colors are scoped under `[data-theme]` so toggling the attribute on <html>
+   re-themes the entire UI instantly. Typography/spacing/radii above are shared
+   and do not change with theme. Contrast targets WCAG AA for text on surfaces.
+   ========================================================================== */
+
+/* --- Light theme -------------------------------------------------------- */
+[data-theme="light"] {
+  --color-bg: #f4f5fa;
+  --color-surface: #ffffff;
+  --color-surface-2: #f7f8fc;
+  --color-surface-hover: #eef0f7;
+  --color-surface-active: #e7e9f3;
+
+  --color-text: #16162d;
+  --color-text-secondary: #4a4a63;
+  --color-text-muted: #6b6b85;
+  --color-text-on-primary: #ffffff;
+
+  --color-primary: #635bff;
+  --color-primary-hover: #5851e0;
+  --color-primary-active: #4a44cf;
+  --color-primary-subtle: #ecebff;
+  --color-primary-border: #d9d7ff;
+
+  --color-border: #e3e5ec;
+  --color-border-strong: #cfd2dc;
+  --color-ring: rgba(99, 91, 255, 0.35);
+
+  --color-shadow: rgba(20, 20, 50, 0.08);
+  --color-shadow-strong: rgba(20, 20, 50, 0.16);
+
+  /* Status colors (text-friendly on light surfaces) */
+  --color-success: #1f9d55;
+  --color-success-bg: #e7f6ee;
+  --color-warning: #b45309;
+  --color-warning-bg: #fdf3e3;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fdecec;
+  --color-info: #2563eb;
+  --color-info-bg: #eaf1fe;
+
+  /* Timer ring track (subtle on the card surface) */
+  --color-timer-track: #e3e5ec;
+}
+
+/* --- Dark theme --------------------------------------------------------- */
+[data-theme="dark"] {
+  --color-bg: #0e0e1a;
+  --color-surface: #181826;
+  --color-surface-2: #20202f;
+  --color-surface-hover: #262638;
+  --color-surface-active: #2d2d42;
+
+  --color-text: #f0f1f8;
+  --color-text-secondary: #b4b6cc;
+  --color-text-muted: #8a8ca8;
+  --color-text-on-primary: #16162d; /* dark text reads AA on the light primary */
+
+  --color-primary: #8b83ff;
+  --color-primary-hover: #a39cff;
+  --color-primary-active: #b3acff;
+  --color-primary-subtle: #2a2745;
+  --color-primary-border: #3a3666;
+
+  --color-border: #2a2a3f;
+  --color-border-strong: #3a3a55;
+  --color-ring: rgba(139, 131, 255, 0.45);
+
+  --color-shadow: rgba(0, 0, 0, 0.35);
+  --color-shadow-strong: rgba(0, 0, 0, 0.5);
+
+  /* Status colors (brighter to read on dark surfaces) */
+  --color-success: #34d399;
+  --color-success-bg: #11251c;
+  --color-warning: #fbbf24;
+  --color-warning-bg: #2a2017;
+  --color-danger: #f87171;
+  --color-danger-bg: #2c1717;
+  --color-info: #60a5fa;
+  --color-info-bg: #16213a;
+
+  --color-timer-track: #2a2a3f;
+}
+
+
+/* ==========================================================================
+   4. Base Element Styles
+   ========================================================================== */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  transition: background-color var(--transition-base) var(--ease),
+    color var(--transition-base) var(--ease);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: var(--lh-tight);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+p {
+  line-height: var(--lh-base);
+}
+
+::selection {
+  background: var(--color-primary-subtle);
+  color: var(--color-text);
+}
+
+/* Consistent visible focus ring for keyboard users. Phase 11 polishes this. */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+
+/* ==========================================================================
+   5. Layout — Header
+   ========================================================================== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+  padding: var(--space-3) var(--space-4);
+  background-color: color-mix(in srgb, var(--color-surface) 85%, transparent);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  transition: background-color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease);
+}
+
+.site-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.site-title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* --- Theme toggle ------------------------------------------------------- */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  transition: background-color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease),
+    color var(--transition-base) var(--ease),
+    transform var(--transition-fast) var(--ease);
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+.theme-toggle__icon {
+  font-size: var(--fs-xl);
+  line-height: 1;
+  display: inline-flex;
+  transition: transform var(--transition-slow) var(--ease-out);
+}
+
+.theme-toggle:hover .theme-toggle__icon {
+  transform: rotate(20deg);
+}
+
+
+/* ==========================================================================
+   6. Layout — Dashboard Grid
+   --------------------------------------------------------------------------
+   The dashboard is a CSS Grid container for the major panels. Mobile-first:
+   single column on the smallest screens, a two-column top row on tablet,
+   and a fuller multi-column grid on desktop. Phase 10 refines breakpoints.
+   ========================================================================== */
+
+.dashboard {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "clock"
+    "pomodoro"
+    "tasks"
+    "links";
+}
+
+.widget--clock {
+  grid-area: clock;
+}
+.widget--pomodoro {
+  grid-area: pomodoro;
+}
+.widget--tasks {
+  grid-area: tasks;
+}
+.widget--links {
+  grid-area: links;
+}
+
+/* Tablet (768px–1024px): two-column top row, tasks and links stacked */
+@media (min-width: 768px) {
+  .dashboard {
+    gap: var(--space-5);
+    padding: var(--space-5);
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "clock    pomodoro"
+      "tasks    tasks"
+      "links    links";
+  }
+}
+
+/* Desktop (>1024px): fuller multi-column dashboard */
+@media (min-width: 1024px) {
+  .dashboard {
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-areas:
+      "clock    pomodoro"
+      "tasks    links";
+  }
+}
+
+
+/* ==========================================================================
+   7. Widget Cards
+   ========================================================================== */
+
+.widget {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: 0 1px 3px var(--color-shadow), 0 1px 2px var(--color-shadow);
+  transition: background-color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease),
+    box-shadow var(--transition-base) var(--ease),
+    transform var(--transition-base) var(--ease);
+}
+
+.widget:hover {
+  box-shadow: 0 4px 16px var(--color-shadow),
+    0 2px 6px var(--color-shadow);
+}
+
+.widget__title {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+
+/* ==========================================================================
+   8. Clock & Greeting
+   ========================================================================== */
+
+.clock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.clock__time {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: 1;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.clock__date {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+}
+
+.greeting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+}
+
+.greeting__salutation {
+  color: var(--color-text-secondary);
+}
+
+.greeting__name {
+  color: var(--color-primary);
+  font-weight: var(--fw-semibold);
+}
+
+/* --- Display name editor ----------------------------------------------- */
+.display-name-editor {
+  margin-top: var(--space-3);
+}
+
+.display-name-editor__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: background-color var(--transition-base) var(--ease),
+    color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease);
+}
+
+.display-name-editor__btn:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+/* The inline edit input toggled by app.js reuses .display-name-editor input */
+.display-name-editor input[type="text"] {
+  margin-top: var(--space-3);
+}
+
+
+/* ==========================================================================
+   9. Pomodoro Timer
+   ========================================================================== */
+
+.timer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-5);
+  width: 220px;
+  height: 220px;
+}
+
+.timer-ring {
+  width: 100%;
+  height: 100%;
+}
+
+/* Background track of the progress ring */
+.timer-ring__track {
+  stroke: var(--color-timer-track);
+}
+
+/* Foreground progress arc. Geometry is theme-independent; only colors come
+   from CSS variables. Circumference = 2 * PI * 90 ~= 565.49. app.js updates
+   stroke-dashoffset to reflect the elapsed fraction of the 25-minute session.
+   Default shows the full ring (25:00 / reset state). */
+.timer-ring__progress {
+  stroke: var(--color-primary);
+  stroke-dasharray: 565.49;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear var(--ease),
+    stroke var(--transition-base) var(--ease);
+}
+
+.timer__display {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.timer__time {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Timer controls ---------------------------------------------------- */
+.timer__controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.timer__btn {
+  min-width: 88px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface-2);
+  color: var(--color-text);
+  transition: background-color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease),
+    color var(--transition-base) var(--ease),
+    transform var(--transition-fast) var(--ease);
+}
+
+.timer__btn:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-strong);
+}
+
+.timer__btn:active {
+  transform: scale(0.97);
+}
+
+.timer__btn--start {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.timer__btn--start:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-text-on-primary);
+}
+
+.timer__btn--start:active {
+  background-color: var(--color-primary-active);
+}
+
+/* --- Timer status / in-app completion indicator ------------------------- */
+.timer__status {
+  margin-top: var(--space-4);
+  min-height: 1.25rem;
+  text-align: center;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+}
+
+.timer__status:not(:empty) {
+  color: var(--color-success);
+}
+
+
+/* ==========================================================================
+   10. Task Manager
+   ========================================================================== */
+
+/* --- Add-task form ----------------------------------------------------- */
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.task-form__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.task-form__row--meta {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.task-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1 1 auto;
+}
+
+.task-form__field--action {
+  flex: 0 0 auto;
+}
+
+.task-form__label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.task-form__input,
+.task-form__select {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-base);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-base) var(--ease),
+    box-shadow var(--transition-base) var(--ease),
+    background-color var(--transition-base) var(--ease);
+}
+
+.task-form__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.task-form__input:focus,
+.task-form__select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-ring);
+}
+
+.task-form__btn {
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-on-primary);
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease),
+    transform var(--transition-fast) var(--ease);
+}
+
+.task-form__btn:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.task-form__btn:active {
+  transform: scale(0.97);
+  background-color: var(--color-primary-active);
+}
+
+/* --- Filter / sort / search controls ----------------------------------- */
+.task-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.task-controls__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.task-controls__field--search {
+  flex: 1 1 200px;
+  min-width: 160px;
+}
+
+.task-controls__label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.task-controls__select,
+.task-controls__input {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-base) var(--ease),
+    box-shadow var(--transition-base) var(--ease),
+    background-color var(--transition-base) var(--ease);
+}
+
+.task-controls__input {
+  width: 100%;
+}
+
+.task-controls__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.task-controls__select:focus,
+.task-controls__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-ring);
+}
+
+/* --- Statistics -------------------------------------------------------- */
+.task-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+
+.task-stats__item {
+  font-weight: var(--fw-medium);
+}
+
+.task-stats__item span {
+  font-weight: var(--fw-bold);
+  color: var(--color-text);
+}
+
+/* --- Task list --------------------------------------------------------- */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* --- Empty / all-complete states --------------------------------------- */
+.task-state {
+  padding: var(--space-5);
+  text-align: center;
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface-2);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.task-state--all-complete {
+  color: var(--color-success);
+  border-style: solid;
+  border-color: var(--color-success);
+  background-color: var(--color-success-bg);
+  font-style: normal;
+  font-weight: var(--fw-semibold);
+}
+
+
+/* --- Task items (rendered by app.js) ------------------------------------ */
+/* These follow the BEM-ish naming used throughout the markup so the
+   dynamically created rows pick up the design system automatically.
+   Phase 6/7 introduces the row markup; Phase 10 polishes these. */
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease);
+}
+
+.task-item:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.task-item__check {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.task-item__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.task-item__title {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+  color: var(--color-text);
+  word-break: break-word;
+}
+
+.task-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.task-item--completed .task-item__title {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+/* Priority + category badges */
+.task-item__priority,
+.task-item__category {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  line-height: 1.6;
+}
+
+.task-item__category {
+  background-color: var(--color-surface-active);
+  color: var(--color-text-secondary);
+}
+
+.task-item__priority--high {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.task-item__priority--medium {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.task-item__priority--low {
+  background-color: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+.task-item__due {
+  color: var(--color-text-muted);
+}
+
+.task-item--overdue .task-item__due {
+  color: var(--color-danger);
+  font-weight: var(--fw-semibold);
+}
+
+.task-item--overdue {
+  border-color: var(--color-danger);
+}
+
+.task-item__actions {
+  display: flex;
+  gap: var(--space-1);
+  flex: 0 0 auto;
+}
+
+.task-item__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  border: 1px solid transparent;
+  transition: background-color var(--transition-base) var(--ease),
+    color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease);
+}
+
+.task-item__btn:hover {
+  background-color: var(--color-surface-active);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.task-item__btn--delete:hover {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+/* Inline edit input (app.js swaps the title for this) */
+.task-item__edit-input {
+  flex: 1 1 auto;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--fs-base);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+
+.task-item__edit-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-ring);
+}
+
+
+/* ==========================================================================
+   11. Quick Links
+   ========================================================================== */
+
+/* --- Add-link form ----------------------------------------------------- */
+.link-form {
+  margin-bottom: var(--space-4);
+}
+
+.link-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.link-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1 1 auto;
+}
+
+.link-form__field--url {
+  flex: 1 1 240px;
+  min-width: 180px;
+}
+
+.link-form__field--action {
+  flex: 0 0 auto;
+}
+
+.link-form__label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.link-form__input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-base);
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-base) var(--ease),
+    box-shadow var(--transition-base) var(--ease),
+    background-color var(--transition-base) var(--ease);
+}
+
+.link-form__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.link-form__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-ring);
+}
+
+.link-form__btn {
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-on-primary);
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease),
+    transform var(--transition-fast) var(--ease);
+}
+
+.link-form__btn:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.link-form__btn:active {
+  transform: scale(0.97);
+  background-color: var(--color-primary-active);
+}
+
+/* --- Inline URL validation error --------------------------------------- */
+.link-form__error {
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+}
+
+/* --- Links list -------------------------------------------------------- */
+.links-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-3);
+}
+
+/* Link cards (rendered by app.js) */
+.link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease),
+    transform var(--transition-base) var(--ease);
+}
+
+.link-item:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-strong);
+  transform: translateY(-2px);
+}
+
+.link-item__link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.link-item__title {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-item__url {
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-item__actions {
+  display: flex;
+  gap: var(--space-1);
+  flex: 0 0 auto;
+}
+
+.link-item__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  border: 1px solid transparent;
+  transition: background-color var(--transition-base) var(--ease),
+    color var(--transition-base) var(--ease),
+    border-color var(--transition-base) var(--ease);
+}
+
+.link-item__btn:hover {
+  background-color: var(--color-surface-active);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.link-item__btn--delete:hover {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+
+/* ==========================================================================
+   12. Footer
+   ========================================================================== */
+
+.site-footer {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+}
+
+.site-footer__text {
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+
+/* ==========================================================================
+   13. Reduced Motion
+   --------------------------------------------------------------------------
+   Disables non-essential animations and transitions for users who prefer
+   reduced motion, replacing them with instant state changes. Refined in
+   Phase 10.5.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* The timer ring progress should update instantly, not animate. */
+  .timer-ring__progress {
+    transition: none !important;
+  }
+}

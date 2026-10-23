@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A single-page personal productivity dashboard with a live clock, Pomodoro timer, task manager, and quick links.">
+  <title>Life Dashboard</title>
+
+  <!--
+    No-flash inline theme script.
+    Reads the stored theme from localStorage key `lifeDashboard.theme.v1`,
+    falls back to the browser `prefers-color-scheme` on first visit, and sets
+    the `data-theme` attribute on <html> BEFORE the body renders. This runs
+    synchronously in <head> to prevent a flash of the wrong theme.
+  -->
+  <script>
+    (function() {
+      try {
+        var stored = localStorage.getItem('lifeDashboard.theme.v1');
+        var theme = stored ? JSON.parse(stored) : null;
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Page header landmark: title + theme toggle -->
+  <header class="site-header">
+    <div class="site-header__brand">
+      <h1 class="site-title">Life Dashboard</h1>
+    </div>
+    <div class="site-header__actions">
+      <!-- Icon-only theme toggle; ARIA labels will be refined in Phase 11 -->
+      <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Toggle light and dark theme" aria-pressed="false">
+        <span class="theme-toggle__icon" aria-hidden="true">&#9681;</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main content landmark holding the four widget sections -->
+  <main class="dashboard">
+
+    <!-- ============================================================= -->
+    <!-- Section 1: Clock & Greeting -->
+    <!-- ============================================================= -->
+    <section id="clock-greeting" class="widget widget--clock" aria-labelledby="clock-greeting-heading">
+      <h2 id="clock-greeting-heading" class="widget__title">Clock &amp; Greeting</h2>
+
+      <div class="clock">
+        <time id="clock-time" class="clock__time" datetime="">--:--</time>
+        <time id="clock-date" class="clock__date" datetime="">—</time>
+      </div>
+
+      <p id="greeting-text" class="greeting">
+        <span class="greeting__salutation">Hello</span>
+        <span id="display-name" class="greeting__name"></span>
+      </p>
+
+      <!-- Editable display name affordance; app.js toggles an inline input -->
+      <div class="display-name-editor">
+        <button id="edit-name-btn" type="button" class="display-name-editor__btn" aria-label="Edit display name">
+          Edit name
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- Section 2: Pomodoro Timer -->
+    <!-- ============================================================= -->
+    <section id="pomodoro-timer" class="widget widget--pomodoro" aria-labelledby="pomodoro-heading">
+      <h2 id="pomodoro-heading" class="widget__title">Pomodoro Timer</h2>
+
+      <div class="timer">
+        <!-- Circular SVG progress ring. Geometry is theme-independent;
+             colors come from CSS variables. stroke-dashoffset is updated
+             by app.js to reflect the elapsed fraction of the 25-minute
+             duration. Circumference = 2 * PI * 90 ~= 565.49 -->
+        <svg id="timer-ring" class="timer-ring" width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="Pomodoro progress ring">
+          <circle class="timer-ring__track" cx="110" cy="110" r="90" fill="none" stroke-width="10"></circle>
+          <circle id="timer-ring-progress" class="timer-ring__progress" cx="110" cy="110" r="90" fill="none" stroke-width="10" stroke-linecap="round" transform="rotate(-90 110 110)"></circle>
+        </svg>
+
+        <div class="timer__display" role="timer" aria-live="off">
+          <span id="timer-time" class="timer__time">25:00</span>
+        </div>
+      </div>
+
+      <div class="timer__controls">
+        <button id="timer-start" type="button" class="timer__btn timer__btn--start" aria-label="Start focus session">Start</button>
+        <button id="timer-pause" type="button" class="timer__btn timer__btn--pause" aria-label="Pause focus session">Pause</button>
+        <button id="timer-reset" type="button" class="timer__btn timer__btn--reset" aria-label="Reset focus session">Reset</button>
+      </div>
+
+      <!-- Live region announcing session completion (in-app indicator
+           when Notification permission is not granted) -->
+      <p id="timer-status" class="timer__status" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- Section 3: Task Manager -->
+    <!-- ============================================================= -->
+    <section id="task-manager" class="widget widget--tasks" aria-labelledby="tasks-heading">
+      <h2 id="tasks-heading" class="widget__title">Tasks</h2>
+
+      <!-- Add-task form: title, priority, category, due date -->
+      <form id="task-form" class="task-form" autocomplete="off">
+        <div class="task-form__row task-form__row--title">
+          <label for="task-title" class="task-form__label">New task</label>
+          <input id="task-title" name="task-title" type="text" class="task-form__input" placeholder="What needs to be done?" maxlength="200" required>
+        </div>
+
+        <div class="task-form__row task-form__row--meta">
+          <div class="task-form__field">
+            <label for="task-priority" class="task-form__label">Priority</label>
+            <select id="task-priority" name="task-priority" class="task-form__select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="task-form__field">
+            <label for="task-category" class="task-form__label">Category</label>
+            <select id="task-category" name="task-category" class="task-form__select">
+              <option value="Personal">Personal</option>
+              <option value="Work">Work</option>
+              <option value="Health">Health</option>
+              <option value="Learning">Learning</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="task-form__field">
+            <label for="task-due-date" class="task-form__label">Due date</label>
+            <input id="task-due-date" name="task-due-date" type="date" class="task-form__input">
+          </div>
+
+          <div class="task-form__field task-form__field--action">
+            <button type="submit" class="task-form__btn" aria-label="Add task">Add</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Filter, sort, and search controls -->
+      <div class="task-controls">
+        <div class="task-controls__field">
+          <label for="task-filter" class="task-controls__label">Filter</label>
+          <select id="task-filter" name="task-filter" class="task-controls__select">
+            <option value="all" selected>All</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="today">Today</option>
+          </select>
+        </div>
+
+        <div class="task-controls__field">
+          <label for="task-sort" class="task-controls__label">Sort</label>
+          <select id="task-sort" name="task-sort" class="task-controls__select">
+            <option value="manual" selected>Manual</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="priority">Priority</option>
+            <option value="due-date">Due date</option>
+          </select>
+        </div>
+
+        <div class="task-controls__field task-controls__field--search">
+          <label for="task-search" class="task-controls__label">Search</label>
+          <input id="task-search" name="task-search" type="search" class="task-controls__input" placeholder="Search tasks...">
+        </div>
+      </div>
+
+      <!-- Statistics display -->
+      <div id="task-stats" class="task-stats" aria-live="polite">
+        <span class="task-stats__item">Total: <span id="stat-total">0</span></span>
+        <span class="task-stats__item">Active: <span id="stat-active">0</span></span>
+        <span class="task-stats__item">Completed: <span id="stat-completed">0</span></span>
+        <span class="task-stats__item">Complete: <span id="stat-percent">0%</span></span>
+      </div>
+
+      <!-- Task list (event delegation target) -->
+      <ul id="task-list" class="task-list" aria-label="Task list"></ul>
+
+      <!-- Empty / all-complete state messages -->
+      <p id="task-empty-state" class="task-state task-state--empty">No tasks yet. Add one above to get started.</p>
+      <p id="task-all-complete-state" class="task-state task-state--all-complete" hidden>All tasks complete. Great job!</p>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- Section 4: Quick Links -->
+    <!-- ============================================================= -->
+    <section id="quick-links" class="widget widget--links" aria-labelledby="links-heading">
+      <h2 id="links-heading" class="widget__title">Quick Links</h2>
+
+      <!-- Add-link form: title, URL -->
+      <form id="quick-link-form" class="link-form" autocomplete="off">
+        <div class="link-form__row">
+          <div class="link-form__field">
+            <label for="link-title" class="link-form__label">Title</label>
+            <input id="link-title" name="link-title" type="text" class="link-form__input" placeholder="Link name" maxlength="100" required>
+          </div>
+
+          <div class="link-form__field link-form__field--url">
+            <label for="link-url" class="link-form__label">URL</label>
+            <input id="link-url" name="link-url" type="url" class="link-form__input" placeholder="https://example.com" required>
+          </div>
+
+          <div class="link-form__field link-form__field--action">
+            <button type="submit" class="link-form__btn" aria-label="Add quick link">Add</button>
+          </div>
+        </div>
+        <p id="link-error" class="link-form__error" role="alert" aria-live="assertive" hidden></p>
+      </form>
+
+      <!-- Links list (event delegation target) -->
+      <ul id="links-list" class="links-list" aria-label="Quick links"></ul>
+    </section>
+
+  </main>
+
+  <!-- Footer landmark -->
+  <footer class="site-footer">
+    <p class="site-footer__text">Life Dashboard &mdash; a local-first productivity homepage. Your data stays in this browser.</p>
+  </footer>
+
+  <!-- Single traditional script (no ES modules) so the app runs from file://.
+       The IIFE namespace inside app.js wires everything up on DOMContentLoaded. -->
+  <script src="js/app.js" defer></script>
+</body>
+</html>

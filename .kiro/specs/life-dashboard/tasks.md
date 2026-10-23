@@ -11,123 +11,123 @@ This plan builds the Life Dashboard in ordered, verifiable phases. Each phase en
 - [x] 1.1 Create the directory structure `life-dashboard/` with `css/` and `js/` subdirectories.
 - [x] 1.2 Create `index.html` with semantic landmarks (`<header>`, `<main>`, `<section>` per widget, `<footer>`), a no-flash inline theme script in `<head>`, and `<link>`/`<script>` tags for `css/style.css` and `js/app.js`.
 - [x] 1.3 Create `css/style.css` with a base reset, typography, and CSS variables for both light and dark themes scoped under `[data-theme]`, including `--color-primary` (`#635BFF` light / `#8B83FF` dark).
-- [ ] 1.4 Create `js/app.js` with an IIFE namespace skeleton (`Storage`, `ThemeController`, `ClockGreeting`, `PomodoroTimer`, `TaskManager`, `QuickLinksManager`, `App`) and an `App.bootstrap` entry on `DOMContentLoaded`.
-- [~] 1.5 Create `README.md` with an overview, feature list, and instructions to open `index.html` directly.
+- [x] 1.4 Create `js/app.js` with an IIFE namespace skeleton (`Storage`, `ThemeController`, `ClockGreeting`, `PomodoroTimer`, `TaskManager`, `QuickLinksManager`, `App`) and an `App.bootstrap` entry on `DOMContentLoaded`.
+- [x] 1.5 Create `README.md` with an overview, feature list, and instructions to open `index.html` directly.
 
 **Checkpoint:** Open `index.html` directly in a browser; the page loads with no console errors and the correct theme applies without a flash.
 
 ### Phase 2: Storage Layer
 
-- [~] 2.1 Define the versioned key constants `lifeDashboard.tasks.v1`, `lifeDashboard.quickLinks.v1`, `lifeDashboard.theme.v1`, and `lifeDashboard.settings.v1`.
-- [~] 2.2 Implement `Storage.isAvailable()` using a `localStorage` write/read probe with feature detection.
-- [~] 2.3 Implement `Storage.load(key, defaultValue)` that reads, `JSON.parse`s, and returns `defaultValue` on parse failure or missing key.
-- [~] 2.4 Implement `Storage.save(key, value)` that `JSON.stringify`s and writes inside a try/catch so quota or availability errors never crash the app.
-- [~] 2.5 Implement `Storage.generateId()` returning `crypto.randomUUID()` with a `Date.now()`/`Math.random`/counter fallback.
+- [x] 2.1 Define the versioned key constants `lifeDashboard.tasks.v1`, `lifeDashboard.quickLinks.v1`, `lifeDashboard.theme.v1`, and `lifeDashboard.settings.v1`.
+- [x] 2.2 Implement `Storage.isAvailable()` using a `localStorage` write/read probe with feature detection.
+- [x] 2.3 Implement `Storage.load(key, defaultValue)` that reads, `JSON.parse`s, and returns `defaultValue` on parse failure or missing key.
+- [x] 2.4 Implement `Storage.save(key, value)` that `JSON.stringify`s and writes inside a try/catch so quota or availability errors never crash the app.
+- [x] 2.5 Implement `Storage.generateId()` returning `crypto.randomUUID()` with a `Date.now()`/`Math.random`/counter fallback.
 
 **Checkpoint:** Saving a value and loading it returns an equivalent value; malformed JSON returns the default; an unavailable `localStorage` falls back to in-memory state.
 
 ### Phase 3: Theme Controller
 
-- [~] 3.1 Implement the anti-flash init: read the stored theme or fall back to `prefers-color-scheme`, then set `data-theme` on `<html>` before the body renders (inline script in `<head>`).
-- [~] 3.2 Implement the theme toggle button that flips `data-theme` and persists the choice to the theme key.
-- [~] 3.3 Apply the theme CSS variables across all components so toggling re-themes the entire UI instantly.
+- [x] 3.1 Implement the anti-flash init: read the stored theme or fall back to `prefers-color-scheme`, then set `data-theme` on `<html>` before the body renders (inline script in `<head>`).
+- [x] 3.2 Implement the theme toggle button that flips `data-theme` and persists the choice to the theme key.
+- [x] 3.3 Apply the theme CSS variables across all components so toggling re-themes the entire UI instantly.
 
 **Checkpoint:** Toggling switches themes and persists across refresh; first visit respects `prefers-color-scheme`; no flash on load. Validates Requirements 23.
 
 ### Phase 4: Clock and Greeting
 
-- [~] 4.1 Implement the clock display rendering current time and date, updated every second via `setInterval`.
-- [~] 4.2 Implement greeting selection by hour against the Greeting_Hours ranges (Morning 05:00-11:59, Afternoon 12:00-16:59, Evening 17:00-22:59, Late Night 23:00-04:59).
-- [~] 4.3 Implement the editable display name: an inline edit affordance that saves to the settings key on confirm and restores the prior value on cancel.
-- [~] 4.4 Load the stored display name on startup and include it in the greeting; render without a name when none is stored.
+- [x] 4.1 Implement the clock display rendering current time and date, updated every second via `setInterval`.
+- [x] 4.2 Implement greeting selection by hour against the Greeting_Hours ranges (Morning 05:00-11:59, Afternoon 12:00-16:59, Evening 17:00-22:59, Late Night 23:00-04:59).
+- [x] 4.3 Implement the editable display name: an inline edit affordance that saves to the settings key on confirm and restores the prior value on cancel.
+- [x] 4.4 Load the stored display name on startup and include it in the greeting; render without a name when none is stored.
 
 **Checkpoint:** Time and date update live; greeting matches the time of day; the display name persists across refresh. Validates Requirements 1, 2, 3.
 
 ### Phase 5: Pomodoro Timer
 
-- [~] 5.1 Implement the target-timestamp countdown: on Start compute `targetEnd = Date.now() + durationMs`; each tick derives `remaining = targetEnd - Date.now()`.
-- [~] 5.2 Implement Start, Pause (store `remainingMs`, clear interval), and Reset (restore 25:00) controls.
-- [~] 5.3 Implement the `mm:ss` time display refreshed every tick.
-- [~] 5.4 Implement the circular progress indicator (SVG ring) whose stroke offset reflects the elapsed fraction.
-- [~] 5.5 Implement completion: when `remaining <= 0`, stop the timer, show 00:00, and fire a `Notification` only if `Notification.permission === "granted"` (never request permission); show an in-app indicator otherwise.
-- [~] 5.6 Confirm the timer keeps accurate remaining time after tab inactivity and continues running across theme changes without resetting.
+- [x] 5.1 Implement the target-timestamp countdown: on Start compute `targetEnd = Date.now() + durationMs`; each tick derives `remaining = targetEnd - Date.now()`.
+- [x] 5.2 Implement Start, Pause (store `remainingMs`, clear interval), and Reset (restore 25:00) controls.
+- [x] 5.3 Implement the `mm:ss` time display refreshed every tick.
+- [x] 5.4 Implement the circular progress indicator (SVG ring) whose stroke offset reflects the elapsed fraction.
+- [x] 5.5 Implement completion: when `remaining <= 0`, stop the timer, show 00:00, and fire a `Notification` only if `Notification.permission === "granted"` (never request permission); show an in-app indicator otherwise.
+- [x] 5.6 Confirm the timer keeps accurate remaining time after tab inactivity and continues running across theme changes without resetting.
 
 **Checkpoint:** Timer counts down accurately, pauses/resets, the ring updates, completion notifies only with granted permission, and the session survives a theme switch and tab inactivity. Validates Requirements 4, 5, 6, 7, 24.
 
 ### Phase 6: Task Manager - Core
 
-- [~] 6.1 Implement the Task data model with `id`, `title`, `completed`, `priority`, `category`, `createdAt`, `updatedAt`, `dueDate`, assigning defaults and timestamps on creation.
-- [~] 6.2 Implement add-task with duplicate prevention: trim the title, reject empty/whitespace titles, and reject duplicates by case-insensitive trimmed comparison.
-- [~] 6.3 Implement safe task rendering using `document.createElement` and `textContent` (no `innerHTML` for titles) with event delegation on the list container.
-- [~] 6.4 Implement toggle completion and delete, updating `updatedAt` and persisting the list to storage after each mutation.
+- [x] 6.1 Implement the Task data model with `id`, `title`, `completed`, `priority`, `category`, `createdAt`, `updatedAt`, `dueDate`, assigning defaults and timestamps on creation.
+- [x] 6.2 Implement add-task with duplicate prevention: trim the title, reject empty/whitespace titles, and reject duplicates by case-insensitive trimmed comparison.
+- [x] 6.3 Implement safe task rendering using `document.createElement` and `textContent` (no `innerHTML` for titles) with event delegation on the list container.
+- [x] 6.4 Implement toggle completion and delete, updating `updatedAt` and persisting the list to storage after each mutation.
 
 **Checkpoint:** Tasks can be added; duplicates and empty titles are rejected; toggling and deleting work and persist across refresh. Validates Requirements 8, 9, 11, 29.
 
 ### Phase 7: Task Manager - Editing and Metadata
 
-- [~] 7.1 Implement inline editing: an input pre-filled with the current title; Enter saves (re-validating duplicates among other tasks), Escape cancels and restores the original.
-- [~] 7.2 Implement category (Personal/Work/Health/Learning/Other) and priority (low/medium/high) selection and visible display on each task.
-- [~] 7.3 Implement due date input and overdue display: mark incomplete tasks with a past due date as overdue, and do not mark completed past-due tasks as overdue.
+- [x] 7.1 Implement inline editing: an input pre-filled with the current title; Enter saves (re-validating duplicates among other tasks), Escape cancels and restores the original.
+- [x] 7.2 Implement category (Personal/Work/Health/Learning/Other) and priority (low/medium/high) selection and visible display on each task.
+- [x] 7.3 Implement due date input and overdue display: mark incomplete tasks with a past due date as overdue, and do not mark completed past-due tasks as overdue.
 
 **Checkpoint:** Tasks can be edited inline with cancel; categories and priorities display; overdue tasks are highlighted and completed past-due tasks are not. Validates Requirements 10, 12, 13.
 
 ### Phase 8: Task Manager - Views and Statistics
 
-- [~] 8.1 Implement filters (All/Active/Completed/Today), where Today includes tasks due today plus overdue incomplete tasks.
-- [~] 8.2 Implement sorting (manual/newest/oldest/priority/due-date) with undated tasks placed last in due-date sort.
-- [~] 8.3 Implement case-insensitive search on titles, composed with the active filter.
-- [~] 8.4 Implement statistics: total, active, completed counts and completion percentage (0 on empty list).
-- [~] 8.5 Implement empty-state and all-complete-state messages.
+- [x] 8.1 Implement filters (All/Active/Completed/Today), where Today includes tasks due today plus overdue incomplete tasks.
+- [x] 8.2 Implement sorting (manual/newest/oldest/priority/due-date) with undated tasks placed last in due-date sort.
+- [x] 8.3 Implement case-insensitive search on titles, composed with the active filter.
+- [x] 8.4 Implement statistics: total, active, completed counts and completion percentage (0 on empty list).
+- [x] 8.5 Implement empty-state and all-complete-state messages.
 
 **Checkpoint:** Filters, sorts, and search update the view without losing data; statistics are accurate; empty and all-complete states render. Validates Requirements 14, 15, 16, 17, 18.
 
 ### Phase 9: Quick Links
 
-- [~] 9.1 Implement default link seeding (Google, YouTube, GitHub, Gmail, Notion) only when the key is absent.
-- [~] 9.2 Implement add/edit/delete for quick links with persistence.
-- [~] 9.3 Implement URL validation accepting only `http:`/`https:` via the `URL` constructor; reject `javascript:`, `data:`, `file:`, and protocol-less inputs with an inline error and do not save.
-- [~] 9.4 Implement rendering links with `target="_blank"` and `rel="noopener noreferrer"`, setting `href` via the DOM API.
+- [x] 9.1 Implement default link seeding (Google, YouTube, GitHub, Gmail, Notion) only when the key is absent.
+- [x] 9.2 Implement add/edit/delete for quick links with persistence.
+- [x] 9.3 Implement URL validation accepting only `http:`/`https:` via the `URL` constructor; reject `javascript:`, `data:`, `file:`, and protocol-less inputs with an inline error and do not save.
+- [x] 9.4 Implement rendering links with `target="_blank"` and `rel="noopener noreferrer"`, setting `href` via the DOM API.
 
 **Checkpoint:** Defaults appear on first load; CRUD works; invalid URLs are rejected; links open in a new tab safely. Validates Requirements 19, 20, 21, 22.
 
 ### Phase 10: Responsive Layout and CSS Polish
 
-- [~] 10.1 Implement the multi-column grid layout for viewports wider than 1024px.
-- [~] 10.2 Implement the tablet layout for 768-1024px viewports.
-- [~] 10.3 Implement the single-column mobile layout for viewports under 768px.
-- [~] 10.4 Style rounded cards, subtle borders, soft shadows, smooth transitions, and the premium minimalist palette in both themes.
-- [~] 10.5 Implement reduced-motion support via `@media (prefers-reduced-motion: reduce)` disabling non-essential animations.
+- [x] 10.1 Implement the multi-column grid layout for viewports wider than 1024px.
+- [x] 10.2 Implement the tablet layout for 768-1024px viewports.
+- [x] 10.3 Implement the single-column mobile layout for viewports under 768px.
+- [x] 10.4 Style rounded cards, subtle borders, soft shadows, smooth transitions, and the premium minimalist palette in both themes.
+- [x] 10.5 Implement reduced-motion support via `@media (prefers-reduced-motion: reduce)` disabling non-essential animations.
 
 **Checkpoint:** The dashboard reflows correctly across desktop, tablet, and mobile breakpoints with a polished look and reduced-motion behavior. Validates Requirements 27, 28 (layout/motion).
 
 ### Phase 11: Accessibility
 
-- [~] 11.1 Add ARIA labels to icon-only controls (theme toggle, edit, delete, timer controls).
-- [~] 11.2 Ensure all interactions are keyboard accessible with Enter/Escape handling where applicable.
-- [~] 11.3 Verify visible `:focus`/`:focus-visible` states in both themes.
-- [~] 11.4 Verify semantic HTML landmarks and an aria-live region for timer completion.
+- [x] 11.1 Add ARIA labels to icon-only controls (theme toggle, edit, delete, timer controls).
+- [x] 11.2 Ensure all interactions are keyboard accessible with Enter/Escape handling where applicable.
+- [x] 11.3 Verify visible `:focus`/`:focus-visible` states in both themes.
+- [x] 11.4 Verify semantic HTML landmarks and an aria-live region for timer completion.
 
 **Checkpoint:** Every feature is reachable and operable by keyboard; controls are announced and visibly focused in both themes. Validates Requirements 28.
 
 ### Phase 12: Testing and Verification
 
-- [~] 12.1 Create a lightweight in-browser test harness (`tests/test.html`) that loads `js/app.js` and runs assertions against exposed pure logic, with no build step or external runner.
-- [~] 12.2 Write a storage round-trip property test: save then load returns an equivalent value for each versioned key.
-- [~] 12.3 Write a duplicate-prevention property test: adding a normalized duplicate does not change the list length.
-- [~] 12.4 Write a URL-validation property test: only `http:`/`https:` URLs are accepted; `javascript:`, `data:`, `file:`, and protocol-less inputs are rejected.
-- [~] 12.5 Write a sorting-stability property test: due-date sort places `dueDate === null` tasks last; manual sort preserves insertion order across repeated re-sorts.
-- [~] 12.6 Write an idempotent-toggling property test: toggling completion twice restores the original value and preserves other fields.
-- [~] 12.7 Write a safe-rendering property test: titles with `<`, `>`, `&`, or quotes render as literal text with no added child elements.
-- [~] 12.8 Write integration smoke tests (1-2 examples each): initial render shows default quick links, empty task state renders, and the correct theme applies on first load.
-- [~] 12.9 Run the full test harness and fix any failures until all tests pass.
+- [x] 12.1 Create a lightweight in-browser test harness (`tests/test.html`) that loads `js/app.js` and runs assertions against exposed pure logic, with no build step or external runner.
+- [x] 12.2 Write a storage round-trip property test: save then load returns an equivalent value for each versioned key.
+- [x] 12.3 Write a duplicate-prevention property test: adding a normalized duplicate does not change the list length.
+- [x] 12.4 Write a URL-validation property test: only `http:`/`https:` URLs are accepted; `javascript:`, `data:`, `file:`, and protocol-less inputs are rejected.
+- [x] 12.5 Write a sorting-stability property test: due-date sort places `dueDate === null` tasks last; manual sort preserves insertion order across repeated re-sorts.
+- [x] 12.6 Write an idempotent-toggling property test: toggling completion twice restores the original value and preserves other fields.
+- [x] 12.7 Write a safe-rendering property test: titles with `<`, `>`, `&`, or quotes render as literal text with no added child elements.
+- [x] 12.8 Write integration smoke tests (1-2 examples each): initial render shows default quick links, empty task state renders, and the correct theme applies on first load.
+- [x] 12.9 Run the full test harness and fix any failures until all tests pass.
 
 **Checkpoint:** All automated property and smoke tests pass. Validates the Correctness Properties in `design.md`.
 
 ### Phase 13: Final Review and Edge-Case Verification
 
-- [~] 13.1 Verify every edge case from the requirements: empty task list, all tasks completed, duplicate submission, special characters in titles, cancel editing, invalid URLs, malformed JSON in storage, storage unavailable, tab inactivity during timer, timer reaching zero, theme change during timer, page refresh after saves, filter switching, repeated sorting changes, URLs without protocol, disallowed protocols, and undated tasks in due-date sort.
-- [~] 13.2 Confirm the app runs by opening `index.html` directly in a browser with no server or build step, and uses no frameworks or third-party libraries.
-- [~] 13.3 Update `README.md` with the final feature set, project structure, and usage notes.
+- [x] 13.1 Verify every edge case from the requirements: empty task list, all tasks completed, duplicate submission, special characters in titles, cancel editing, invalid URLs, malformed JSON in storage, storage unavailable, tab inactivity during timer, timer reaching zero, theme change during timer, page refresh after saves, filter switching, repeated sorting changes, URLs without protocol, disallowed protocols, and undated tasks in due-date sort.
+- [x] 13.2 Confirm the app runs by opening `index.html` directly in a browser with no server or build step, and uses no frameworks or third-party libraries.
+- [x] 13.3 Update `README.md` with the final feature set, project structure, and usage notes.
 
 **Checkpoint:** All edge cases are handled gracefully and the app runs standalone by opening `index.html`.
 
